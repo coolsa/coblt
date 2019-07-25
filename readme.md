@@ -6,5 +6,5 @@ Its features include:
 - Loop tools
 - Decoration preview
 
-It is built using MelonJS, requireJS, and codemirror.
+It is built using CraftyJS, requireJS, and codemirror.
 
