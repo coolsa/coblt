@@ -42,11 +42,11 @@ define([
 		});
 		Crafty.bind("MouseWheelScroll",function(e){
 			asdf = e;
-			var zoom = 1+e.direction/10,
+			var zoom = 1+e.direction/20,
 				pos = {x: (e.realX+Crafty.viewport.x)*Crafty.viewport._scale,y: (e.realY+Crafty.viewport.y)*Crafty.viewport._scale},
 				oldScale=Crafty.viewport._scale;
 			console.log([asdf,oldScale,Crafty.viewport._scale,pos,Crafty.viewport.x*Crafty.viewport._scale]);
-			if((Crafty.viewport._scale>4&&zoom>1)||(Crafty.viewport._scale<0.1&&zoom<1)) return;
+			if((Crafty.viewport._scale>20&&zoom>1)||(Crafty.viewport._scale<0.1&&zoom<1)) return;
 			Crafty.viewport.scale(zoom*Crafty.viewport._scale);
 			var mousePos ={x: (1-e.clientX)/Crafty.viewport._scale, y: (1-e.clientY)/Crafty.viewport._scale}
 			Crafty.viewport.x=(pos.x)/Crafty.viewport._scale-e.realX;
