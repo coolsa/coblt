@@ -58,12 +58,15 @@ define([
 		test: function(hue='-90deg',x=4,y=0,z=0){
 			ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
-			.css('image-rendering','crisp-edges')
-			.css('image-rendering','pixelated')
 			.attach(
 				Crafty.e('2D','DOM','Sprite','transparent')
-					.css('filter','hue-rotate('+hue+')'),
+					.css('filter','hue-rotate('+hue+')')
+					.css('image-rendering','crisp-edges')
+					.css('image-rendering','pixelated'),
 				Crafty.e('2D','DOM','Sprite','empty')
+					.css('image-rendering','crisp-edges')
+					.css('image-rendering','pixelated')
+
 			)
 			.bind('MouseOver',function(e){
 				this._children[2].sprite('select');
@@ -73,6 +76,9 @@ define([
 					this._children[2].draw();
 					this.unbind('MouseOut');
 				});
+			})
+			.bind('Click',function(e){
+				this.destroy();
 			});
 			this.isoGrid.place(ent,x,y,z);
 			ent.draw();
