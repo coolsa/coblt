@@ -52,21 +52,25 @@ define([
 			Crafty.viewport.x=(pos.x)/Crafty.viewport._scale-e.realX;
 			Crafty.viewport.y=(pos.y)/Crafty.viewport._scale-e.realY;
 		});
-		this.isoGrid = Crafty.diamondIso.init(32,16,20,20);
+		this.isoGrid = Crafty.isometric.size(32,16);//Crafty.diamondIso.init(32,16,20,20);
 	};
 	cubeView.prototype = {
 		test: function(hue='-90deg',x=4,y=0,z=0){
 			ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
+			.css('image-rendering','crisp-edges')
+			.css('image-rendering','pixelated')
 			.attach(
-				Crafty.e('2D','DOM','Sprite','transparent')
+				Crafty.e('2D','DOM','Sprite','solid')
 					.css('filter','hue-rotate('+hue+')')
 					.css('image-rendering','crisp-edges')
 					.css('image-rendering','pixelated'),
 				Crafty.e('2D','DOM','Sprite','empty')
 					.css('image-rendering','crisp-edges')
-					.css('image-rendering','pixelated')
-
+					.css('image-rendering','pixelated'),
+				Crafty.e('2D','DOM','Sprite','empty')
+					.css('image-rendering','crisp-edges')
+					.css('image-rendering','pixelated'),
 			)
 			.bind('MouseOver',function(e){
 				this._children[2].sprite('select');
@@ -80,8 +84,12 @@ define([
 			.bind('Click',function(e){
 				this.destroy();
 			});
-			this.isoGrid.place(ent,x,y,z);
+			this.place(ent,x,y,z);
 			ent.draw();
+		},
+		place: function(ent, x, y, z){
+			this.isoGrid.centerAt(0,0);
+			this.isoGrid.place(Math.floor((x-y)/2),x+y,z*2,ent);
 		}
 	}
 	return cubeView;
