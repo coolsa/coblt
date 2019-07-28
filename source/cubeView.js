@@ -22,11 +22,10 @@ define([
 			transparent: [1,3],
 			special: [2,3],
 			select: [3,3],
-			empty: [-1,-1]
+			empty:[5,5]
 		})
 		Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e){
 			if(e.button>1) return;
-			console.log(e);
 			var base = {x: e.clientX, y: e.clientY};
 			function scroll(e){
 				var dx = base.x - e.clientX,
@@ -43,9 +42,10 @@ define([
 		Crafty.bind("MouseWheelScroll",function(e){
 			asdf = e;
 			var zoom = 1+e.direction/20,
-				pos = {x: (e.realX+Crafty.viewport.x)*Crafty.viewport._scale,y: (e.realY+Crafty.viewport.y)*Crafty.viewport._scale},
-				oldScale=Crafty.viewport._scale;
-			console.log([asdf,oldScale,Crafty.viewport._scale,pos,Crafty.viewport.x*Crafty.viewport._scale]);
+				pos = {
+					x: (e.realX+Crafty.viewport.x)*Crafty.viewport._scale,
+					y: (e.realY+Crafty.viewport.y)*Crafty.viewport._scale
+				};
 			if((Crafty.viewport._scale>20&&zoom>1)||(Crafty.viewport._scale<0.1&&zoom<1)) return;
 			Crafty.viewport.scale(zoom*Crafty.viewport._scale);
 			var mousePos ={x: (1-e.clientX)/Crafty.viewport._scale, y: (1-e.clientY)/Crafty.viewport._scale}
@@ -55,13 +55,25 @@ define([
 		this.isoGrid = Crafty.diamondIso.init(32,16,20,20);
 	};
 	cubeView.prototype = {
-		test: function(hue='90deg',x=4,y=0,z=0){
-			ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','transparent')
-			.sprite('solid')
+		test: function(hue='-90deg',x=4,y=0,z=0){
+			ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
-			.css('filter','hue-rotate('+hue+')')
 			.css('image-rendering','crisp-edges')
-			.css('image-rendering','pixelated');
+			.css('image-rendering','pixelated')
+			.attach(
+				Crafty.e('2D','DOM','Sprite','transparent')
+					.css('filter','hue-rotate('+hue+')'),
+				Crafty.e('2D','DOM','Sprite','empty')
+			)
+			.bind('MouseOver',function(e){
+				this._children[2].sprite('select');
+				this._children[2].draw();
+				this.bind('MouseOut',function(e){
+					this._children[2].sprite('empty');
+					this._children[2].draw();
+					this.unbind('MouseOut');
+				});
+			});
 			this.isoGrid.place(ent,x,y,z);
 			ent.draw();
 		}
