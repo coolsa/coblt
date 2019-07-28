@@ -1,14 +1,14 @@
 requirejs.config({
 	baseUrl: './source',
 	paths:{
-		crafty : '../bower_components/crafty/dist/crafty',
-		domReady: '../bower_components/domReady/domReady',
-		jquery: '../bower_components/jquery/dist/jquery',
-		jqueryui: '../bower_components/jquery-ui/jquery-ui'
+		crafty : '../node_modules/craftyjs/dist/crafty',
+		domReady: '../node_modules/domready/ready',
+		jquery: '../node_modules/jquery/dist/jquery',
+		jqueryui: '../node_modules/jquery-ui/jquery-ui'
 	},
 	packages:[{
 		name:'codemirror',
-		location:'../bower_components/codemirror',
+		location:'../node_modules/codemirror',
 		main: 'lib/codemirror'
 	}]
 });
