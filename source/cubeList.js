@@ -1,61 +1,119 @@
-define([]),function(){
-	function cubeList(start=null,end=null){
-		this._start = start;
-		this._end=end;
+define([],function(){
+	function cubeList(){
+		this._start = null;
 		this.length = 0;
 	};
 	cubeList.prototype = {
-		push: function(cube,ent,pos){
-			if(!this._start&&!this._end){
-				this._start = this._end = cube;
+		push: function(cube,spot){
+			if(this.length==0)
+				this._start = cube;
+			else if(spot){
+				cube._next = spot._next;
+				spot._next = cube;
 			}
-			if(!cube)
-				cube = this._end;
-			if(cube == this._end){
-				cube._next = node(ent,pos,null,cube);
-				this._end = cube._next;
-			};
 			else{
-				cube._next._prev = node(ent,pos,cube._next,cube);
-				cube._next = cube._next._prev;
-			};
+				var pos = this._start;
+				if(pos)while(pos._next!=null) pos = pos._next;
+				pos._next=cube;
+			}
 			this.length++;
 		},
 		pop: function(cube){
-			if(!cube._next && !cube._prev)
-				throw("Cannot delete last cube in list");
-			if(cube == this._start)
+			if(this.length==0)
+				throw("No nodes left to pop");
+			if(cube==this._start){
+				if(!cube._next){
+					this._start=null;
+					this.length=0;
+					return cube;
+				}
 				this._start = cube._next;
-			if(cube == this._end)
-				this._end = cube._prev;
-			if(!cube._next){
-				cube._prev._next = null;
-			}
-			else if(!cube._prev){
-				cube._next._prev = null;
 			}
 			else{
-				cube._next._prev = cube._prev;
-				cube._prev._next = cube._next;
+				var pos = this._start;
+				while(pos._next=!cube)
+					pos=pos._next;
+				if(cube)
+					pos._next=cube._next;
+				else pos._next = null;
 			}
 			this.length--;
+			return cube;
 		},
-		sort: function(list=null){
+		mergeSort: function(){
 			if(this.length<=1) return; //end if its only 1.
-			
-			left = cubeList();
-			right = cubeList();
+			var left = new cubeList(),
+				right = new cubeList(),
+				pos = this._start;
+			for(i=0;i<this.length;i++){
+				if(i<this.length/2)
+					left.push(copy(pos));
+				else
+					right.push(copy(pos));
+				pos=pos._next;
+			};
+			left.mergeSort();
+			right.mergeSort();
+			this._start = mergeList(left,right)._start;
 		},
-		merge: function(left, right){
-			left._end._next = right._start;
-			right._start._prev = left._end;
-			left._end = right._end;
+		forEach: function(execute){
+			var pos = this._start;
+			while(pos){
+				execute(pos);
+				pos=pos._next;
+			}
 		},
-		copy: function(cube){
-			return node(cube._ent,cube._pos);
+		newCube: function(ent,pos){
+			this.push(new cubeNode(ent,pos));
 		}
 	};
-	function node(ent,pos = {x: null, y: null, z: null}, next = null, prev = null){
+	function mergeList(left, right){
+		var list = new cubeList();
+		while(left._start && right._start){
+			if(left._start._pos.z<right._start._pos.z){
+				list.push(copy(left._start));
+				left.pop(left._start);
+			}
+			else if(left._start._pos.z==right._start._pos.z){
+				if(left._start._pos.x<right._start._pos.x){
+					list.push(copy(left._start));
+					left.pop(left._start);
+				}
+				else if(left._start._pos.x==right._start._pos.x){
+					if(left._start._pos.y<right._start._pos.y){
+						list.push(copy(left._start));
+						left.pop(left._start);
+					}
+					else if(left._start._pos.y==right._start._pos.y){
+						throw("Two cubes are in the same space.");
+					}
+					else{
+						list.push(copy(right._start));
+						right.pop(right._start);
+					}
+				}
+				else{
+					list.push(copy(right._start));
+					right.pop(right._start);
+				}
+
+			}
+			else{
+				list.push(copy(right._start));
+				right.pop(right._start);
+			}
+		}
+		while(left._start){
+			list.push(copy(left._start));
+			left.pop(left._start);
+		}
+		while(right._start){
+			list.push(copy(right._start));
+			right.pop(right._start);
+		}
+		return list;
+	}
+	function cubeNode(ent=null,pos = {x: null, y: null, z: null},next=null){
 		this._ent = ent;
 		this._pos = pos;
 		this._command = null; //this is going to cointain the line that defines this block.
@@ -65,7 +123,9 @@ define([]),function(){
 		//and then i can easily sort it as well.
 		//and even easier, drawing!
 		this._next = next;
-		this._prev = prev;
+	};
+	function copy(cube){
+		return new cubeNode(cube._ent,cube._pos);
 	};
 	return cubeList;
 });

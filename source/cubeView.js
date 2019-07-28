@@ -1,7 +1,8 @@
 define([
 	'crafty',
-	'jquery'
-],function(Crafty,$){
+	'jquery',
+	'cubeList'
+],function(Crafty,$,cubeList){
 	function cubeView(){
 		Crafty.init(1000,500,$("#iso-view")[0]);
 		Crafty.pixelart(true);
@@ -53,6 +54,7 @@ define([
 			Crafty.viewport.y=(pos.y)/Crafty.viewport._scale-e.realY;
 		});
 		this.isoGrid = Crafty.isometric.size(32,16);//Crafty.diamondIso.init(32,16,20,20);
+		this.cubes = new cubeList();
 	};
 	cubeView.prototype = {
 		test: function(hue='-90deg',x=4,y=0,z=0){
@@ -89,8 +91,9 @@ define([
 		},
 		place: function(ent, x, y, z){
 			this.isoGrid.centerAt(0,0);
+			this.cubes.newCube(ent,{x:x,y:y,z:z});
 			this.isoGrid.place(Math.floor((x-y)/2),x+y,z*2,ent);
-		}
+		},
 	}
 	return cubeView;
 });
