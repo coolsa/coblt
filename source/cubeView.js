@@ -91,22 +91,40 @@ define([
 		},
 		place: function(ent, x, y, z){
 			//this is going to be a fun one, manually recoding placing to work better, for all cases! wowzers.
+			var pos = this.pos2px(x,y,z);
+			ent.x = pos.x;
+			ent.y = pos.y/2 - (ent._h - 2*this.isoGrid._tile.height)-this.isoGrid._tile.height*z;
+			ent.z = (x+y+z)*4;
+			ent._children[1].z=ent.z+1;
+			ent._children[2].z=ent.z+2;
+			ent._children[3].z=ent.z+3;
+			console.log(ent._globalZ);
+			ent._children[1].css('z-index',(ent._globalZ+1).toString);
+			ent._children[2].css('z-index',(ent._globalZ+2).toString);
+			ent._children[3].css('z-index',(ent._globalZ+3).toString);
+			console.log(ent._globalZ);
+		},
+		pos2px: function(x,y,z){
+			return {
+				x:((x-y-1)*this.isoGrid._tile.width/2),
+				y:((x+y)*this.isoGrid._tile.width/2),
+				z:(x+y+z)*3
+			};
+			//take these x,y,z values and convert them into useful values for the grid.
 		},
 		drawAll: function(order = ['z','x','y',1,1,1]){
 			var that = this;
 			this.isoGrid.centerAt(0,0);
 			this.isoGrid.cubes.mergeSort(order);
 			this.isoGrid.cubes.forEach(function(cube){
-				that.isoGrid.place(
-					Math.floor((cube._pos[order[1]]-cube._pos[order[2]])/2),
-					cube._pos[order[1]]+cube._pos[order[2]],
-					cube._pos[order[0]]*2*order[3],
-					cube._ent
-				);
+				//that.isoGrid.place(
+				//	Math.floor((cube._pos[order[1]]-cube._pos[order[2]])/2),
+				//	cube._pos[order[1]]+cube._pos[order[2]],
+				//	cube._pos[order[0]]*2*order[3],
+				//	cube._ent
+				//);
+				that.place(cube._ent,cube._pos[order[1]]*order[4],cube._pos[order[2]]*order[5],cube._pos[order[0]]*order[3])
 				cube._ent.draw();
-				cube._ent.css('z-index',cube._ent._globalZ.toString());
-				cube._ent._children[1].css('z-index',cube._ent._children[1]._globalZ.toString());
-				cube._ent._children[2].css('z-index',cube._ent._children[2]._globalZ.toString());
 			})
 		}
 	}
