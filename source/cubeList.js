@@ -40,7 +40,7 @@ define([],function(){
 			this.length--;
 			return cube;
 		},
-		mergeSort: function(){
+		mergeSort: function(order = ['z','x','y',1,1,1]){
 			if(this.length<=1) return; //end if its only 1.
 			var left = new cubeList(),
 				right = new cubeList(),
@@ -52,10 +52,10 @@ define([],function(){
 					right.push(copy(pos));
 				pos=pos._next;
 			};
-			left.mergeSort();
-			right.mergeSort();
-			this._start = mergeList(left,right)._start;
-		},
+			left.mergeSort(order);
+			right.mergeSort(order);
+			this._start = mergeList(left,right,order)._start;
+	  	},
 		forEach: function(execute){
 			var pos = this._start;
 			while(pos){
@@ -67,40 +67,23 @@ define([],function(){
 			this.push(new cubeNode(ent,pos));
 		}
 	};
-	function mergeList(left, right){
+	function mergeList(left, right, order = ['z','x','y',1,1,1]){
 		var list = new cubeList();
 		while(left._start && right._start){
-			if(left._start._pos.z<right._start._pos.z){
-				list.push(copy(left._start));
-				left.pop(left._start);
-			}
-			else if(left._start._pos.z==right._start._pos.z){
-				if(left._start._pos.x<right._start._pos.x){
+			for(i=0;i<order.length/2;i++){
+				if(left._start._pos[order[i]]*order[i+3]<right._start._pos[order[i]]*order[i+3]){
 					list.push(copy(left._start));
 					left.pop(left._start);
+					i=3;
 				}
-				else if(left._start._pos.x==right._start._pos.x){
-					if(left._start._pos.y<right._start._pos.y){
-						list.push(copy(left._start));
-						left.pop(left._start);
-					}
-					else if(left._start._pos.y==right._start._pos.y){
-						throw("Two cubes are in the same space.");
-					}
-					else{
-						list.push(copy(right._start));
-						right.pop(right._start);
-					}
+				else if(left._start._pos[order[i]]*order[i+3]==right._start._pos[order[i]]*order[i+3]){
+					if(i==2)	throw(["Two cubes are in the same space.",left._start,right._start]);
 				}
 				else{
 					list.push(copy(right._start));
 					right.pop(right._start);
+					i=3;
 				}
-
-			}
-			else{
-				list.push(copy(right._start));
-				right.pop(right._start);
 			}
 		}
 		while(left._start){

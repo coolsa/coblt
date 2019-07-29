@@ -9,7 +9,7 @@ define([
 		for(var x=0;x<20;x++){
 			for(var y=0;y<20;y++){
 				var tint = (x+y)*20%360
-				this.iso.test((tint)+'deg',x,y,0);
+				this.iso.newBlock((tint)+'deg',x,y,0);
 			}
 		};
 	};

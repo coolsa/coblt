@@ -57,8 +57,8 @@ define([
 		this.cubes = new cubeList();
 	};
 	cubeView.prototype = {
-		test: function(hue='-90deg',x=4,y=0,z=0){
-			ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
+		newBlock: function(hue='-90deg',x=4,y=0,z=0){
+			var ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
 			.css('image-rendering','crisp-edges')
 			.css('image-rendering','pixelated')
@@ -91,7 +91,7 @@ define([
 		},
 		place: function(ent, x, y, z){
 			this.isoGrid.centerAt(0,0);
-			this.cubes.newCube(ent,{x:x,y:y,z:z});
+			this.cubes.newCube(ent,{x:y,y:x,z:z});
 			this.isoGrid.place(Math.floor((x-y)/2),x+y,z*2,ent);
 		},
 	}
