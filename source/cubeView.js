@@ -41,7 +41,6 @@ define([
 			});
 		});
 		Crafty.bind("MouseWheelScroll",function(e){
-			asdf = e;
 			var zoom = 1+e.direction/20,
 				pos = {
 					x: (e.realX+Crafty.viewport.x)*Crafty.viewport._scale,
@@ -54,11 +53,11 @@ define([
 			Crafty.viewport.y=(pos.y)/Crafty.viewport._scale-e.realY;
 		});
 		this.isoGrid = Crafty.isometric.size(32,16);//Crafty.diamondIso.init(32,16,20,20);
-		this.cubes = new cubeList();
+		this.isoGrid.cubes = new cubeList();
 	};
 	cubeView.prototype = {
-		newBlock: function(hue='-90deg',x=4,y=0,z=0){
-			var ent = Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
+		newBlock: function(hue='0deg'){
+			return Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
 			.css('image-rendering','crisp-edges')
 			.css('image-rendering','pixelated')
@@ -86,14 +85,30 @@ define([
 			.bind('Click',function(e){
 				this.destroy();
 			});
-			this.place(ent,x,y,z);
-			ent.draw();
+		},
+		addCube: function(ent, x, y, z){
+			this.isoGrid.cubes.newCube(ent,{x:x,y:y,z:z});
 		},
 		place: function(ent, x, y, z){
-			this.isoGrid.centerAt(0,0);
-			this.cubes.newCube(ent,{x:y,y:x,z:z});
-			this.isoGrid.place(Math.floor((x-y)/2),x+y,z*2,ent);
+			//this is going to be a fun one, manually recoding placing to work better, for all cases! wowzers.
 		},
+		drawAll: function(order = ['z','x','y',1,1,1]){
+			var that = this;
+			this.isoGrid.centerAt(0,0);
+			this.isoGrid.cubes.mergeSort(order);
+			this.isoGrid.cubes.forEach(function(cube){
+				that.isoGrid.place(
+					Math.floor((cube._pos[order[1]]-cube._pos[order[2]])/2),
+					cube._pos[order[1]]+cube._pos[order[2]],
+					cube._pos[order[0]]*2*order[3],
+					cube._ent
+				);
+				cube._ent.draw();
+				cube._ent.css('z-index',cube._ent._globalZ.toString());
+				cube._ent._children[1].css('z-index',cube._ent._children[1]._globalZ.toString());
+				cube._ent._children[2].css('z-index',cube._ent._children[2]._globalZ.toString());
+			})
+		}
 	}
 	return cubeView;
 });

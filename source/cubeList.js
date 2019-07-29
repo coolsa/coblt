@@ -2,6 +2,8 @@ define([],function(){
 	function cubeList(){
 		this._start = null;
 		this.length = 0;
+		this._range = {x:[0,0],y:[0,0],z:[0,0]};
+		this._order = ['z','x','y',1,1,1]; //z draws over every other lower z, then x draws over every lower x, but not higher z, then y draws over lower y, but none others...
 	};
 	cubeList.prototype = {
 		push: function(cube,spot){
@@ -15,6 +17,11 @@ define([],function(){
 				var pos = this._start;
 				if(pos)while(pos._next!=null) pos = pos._next;
 				pos._next=cube;
+			}
+			var axis = ['x','y','z']; //shoutouts to my 4d pals, gotta make this a variable.
+			for(var i=0; i<axis.length;i++){
+				if(cube._pos[axis[i]]<this._range[axis[i]][0]) this._range[axis[i]][0]=cube._pos[axis[i]]
+				else if(cube._pos[axis[i]]>this._range[axis[i]][1]) this._range[axis[i]][1]=cube._pos[axis[i]]
 			}
 			this.length++;
 		},
@@ -40,7 +47,8 @@ define([],function(){
 			this.length--;
 			return cube;
 		},
-		mergeSort: function(order = ['z','x','y',1,1,1]){
+		mergeSort: function(order = this._order){
+			this._order = order; //if someone sets it, I GOTTA KNOW.
 			if(this.length<=1) return; //end if its only 1.
 			var left = new cubeList(),
 				right = new cubeList(),
@@ -52,9 +60,9 @@ define([],function(){
 					right.push(copy(pos));
 				pos=pos._next;
 			};
-			left.mergeSort(order);
-			right.mergeSort(order);
-			this._start = mergeList(left,right,order)._start;
+			left.mergeSort(this._order);
+			right.mergeSort(this._order);
+			this._start = mergeList(left,right,this._order)._start;
 	  	},
 		forEach: function(execute){
 			var pos = this._start;
