@@ -98,11 +98,11 @@ define([
 			ent._children[1].z=ent.z+1;
 			ent._children[2].z=ent.z+2;
 			ent._children[3].z=ent.z+3;
-			console.log(ent._globalZ);
+			//console.log(ent._globalZ);
 			ent._children[1].css('z-index',(ent._globalZ+1).toString);
 			ent._children[2].css('z-index',(ent._globalZ+2).toString);
 			ent._children[3].css('z-index',(ent._globalZ+3).toString);
-			console.log(ent._globalZ);
+			//console.log(ent._globalZ);
 		},
 		pos2px: function(x,y,z){
 			return {
@@ -116,13 +116,11 @@ define([
 			var that = this;
 			this.isoGrid.centerAt(0,0);
 			this.isoGrid.cubes.mergeSort(order);
-			this.isoGrid.cubes.forEach(function(cube){
-				//that.isoGrid.place(
-				//	Math.floor((cube._pos[order[1]]-cube._pos[order[2]])/2),
-				//	cube._pos[order[1]]+cube._pos[order[2]],
-				//	cube._pos[order[0]]*2*order[3],
-				//	cube._ent
-				//);
+			this.isoGrid.cubes.forEach(function(cube,list){
+				if(!cube._ent._children[0]){
+					list.pop(cube);
+					return;
+				}
 				that.place(cube._ent,cube._pos[order[1]]*order[4],cube._pos[order[2]]*order[5],cube._pos[order[0]]*order[3])
 				cube._ent.draw();
 			})

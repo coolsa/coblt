@@ -67,7 +67,7 @@ define([],function(){
 		forEach: function(execute){
 			var pos = this._start;
 			while(pos){
-				execute(pos);
+				execute(pos,this);
 				pos=pos._next;
 			}
 		},

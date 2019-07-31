@@ -6,15 +6,14 @@ define([
 		this.iso = new cubeView();
 		this.test();
 		//this.iso.test((180)+'deg',0,0,0);
-		for(var z=0;z<4;z++){
-			this.iso.addCube(this.iso.newBlock((z*90)+'deg'),0,0,z);
+		for(var z=1;z<3;z++){
+			for(var x=0;x<20/z;x++){
+				for(var y=0;y<20/z;y++){
+					var tint = (x+y)*20%360
+					this.iso.addCube(this.iso.newBlock((tint)+'deg'),x,y,z);
+				}
+			}
 		};
-		for(var x=1;x<4;x++){
-			this.iso.addCube(this.iso.newBlock((0)+'deg'),x,0,0);
-		}
-		for(var y=2;y<4;y++){
-			this.iso.addCube(this.iso.newBlock((90)+'deg'),0,y,0);
-		}
 		this.iso.drawAll();
 	};
 	main.prototype = {
