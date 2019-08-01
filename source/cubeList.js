@@ -7,6 +7,7 @@ define([],function(){
 	};
 	cubeList.prototype = {
 		push: function(cube,spot){
+			if(!cube) return;
 			if(this.length==0)
 				this._start = cube;
 			else if(spot){
@@ -23,6 +24,7 @@ define([],function(){
 				if(cube._pos[axis[i]]<this._range[axis[i]][0]) this._range[axis[i]][0]=cube._pos[axis[i]]
 				else if(cube._pos[axis[i]]>this._range[axis[i]][1]) this._range[axis[i]][1]=cube._pos[axis[i]]
 			}
+			cube._list = this;
 			this.length++;
 		},
 		pop: function(cube){
@@ -34,11 +36,11 @@ define([],function(){
 					this.length=0;
 					return cube;
 				}
-				this._start = cube._next;
+				this._start = this._start._next;
 			}
 			else{
 				var pos = this._start;
-				while(pos._next=!cube)
+				while(pos._next!=cube)
 					pos=pos._next;
 				if(cube)
 					pos._next=cube._next;
@@ -53,15 +55,15 @@ define([],function(){
 			var left = new cubeList(),
 				right = new cubeList(),
 				pos = this._start;
-			for(i=0;i<this.length;i++){
+			for(i=0;i<this.length&&pos;i++){
 				if(i<this.length/2)
 					left.push(copy(pos));
 				else
 					right.push(copy(pos));
 				pos=pos._next;
 			};
-			left.mergeSort(this._order);
-			right.mergeSort(this._order);
+			left.mergeSort(order);
+			right.mergeSort(order);
 			this._start = mergeList(left,right,this._order)._start;
 	  	},
 		forEach: function(execute){
@@ -71,8 +73,8 @@ define([],function(){
 				pos=pos._next;
 			}
 		},
-		newCube: function(ent,pos){
-			this.push(new cubeNode(ent,pos));
+		newCube: function(ent,pos,list=this){
+			this.push(new cubeNode(ent,pos,list));
 		}
 	};
 	function mergeList(left, right, order = ['z','x','y',1,1,1]){
@@ -104,9 +106,11 @@ define([],function(){
 		}
 		return list;
 	}
-	function cubeNode(ent=null,pos = {x: null, y: null, z: null},next=null){
+	function cubeNode(ent=null,pos = {x: null, y: null, z: null},list=null,next=null){
 		this._ent = ent;
 		this._pos = pos;
+		this._list = list;
+		if(this._ent) this._ent._cube = this;
 		this._command = null; //this is going to cointain the line that defines this block.
 		//i guess since if its drawing, it goes in order of lowest z to lowest y to lowest x,
 		//it can act sort of like a line???
@@ -116,7 +120,9 @@ define([],function(){
 		this._next = next;
 	};
 	function copy(cube){
-		return new cubeNode(cube._ent,cube._pos);
+		if(cube)
+			return new cubeNode(cube._ent,cube._pos,cube._list);
+		else return null;
 	};
 	return cubeList;
 });

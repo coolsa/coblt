@@ -6,6 +6,9 @@ define([
 		this.iso = new cubeView();
 		this.test();
 		//this.iso.test((180)+'deg',0,0,0);
+//		this.iso.addCube(this.iso.newBlock('100deg'),0,0,0);
+//		this.iso.addCube(this.iso.newBlock('0deg'),2,2,0);
+//		this.iso.addCube(this.iso.newBlock('200deg'),4,4,1);
 		for(var z=1;z<3;z++){
 			for(var x=0;x<20/z;x++){
 				for(var y=0;y<20/z;y++){

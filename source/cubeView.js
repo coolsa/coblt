@@ -52,11 +52,13 @@ define([
 			Crafty.viewport.x=(pos.x)/Crafty.viewport._scale-e.realX;
 			Crafty.viewport.y=(pos.y)/Crafty.viewport._scale-e.realY;
 		});
+		Crafty.background('#eeeeee');
 		this.isoGrid = Crafty.isometric.size(32,16);//Crafty.diamondIso.init(32,16,20,20);
 		this.isoGrid.cubes = new cubeList();
 	};
 	cubeView.prototype = {
 		newBlock: function(hue='0deg'){
+			var that = this;
 			return Crafty.e('2D', 'Canvas','DOM','Mouse','Sprite','empty')
 			.areaMap(16,0, 0,8, 0,24, 16,32, 32,24, 32,8)
 			.css('image-rendering','crisp-edges')
@@ -83,6 +85,7 @@ define([
 				});
 			})
 			.bind('Click',function(e){
+				this._cube._list.pop(this._cube);
 				this.destroy();
 			});
 		},
@@ -115,12 +118,13 @@ define([
 		drawAll: function(order = ['z','x','y',1,1,1]){
 			var that = this;
 			this.isoGrid.centerAt(0,0);
-			this.isoGrid.cubes.mergeSort(order);
+			Crafty.viewport.reset();
+			//this.isoGrid.cubes.mergeSort(order);
 			this.isoGrid.cubes.forEach(function(cube,list){
-				if(!cube._ent._children[0]){
-					list.pop(cube);
-					return;
-				}
+				//if(!cube._ent._children[0]){
+				//	list.pop(cube);
+				//	return;
+				//}
 				that.place(cube._ent,cube._pos[order[1]]*order[4],cube._pos[order[2]]*order[5],cube._pos[order[0]]*order[3])
 				cube._ent.draw();
 			})
