@@ -115,7 +115,8 @@ define([
 			};
 			//take these x,y,z values and convert them into useful values for the grid.
 		},
-		drawAll: function(order = ['z','x','y',1,1,1]){
+		drawAll: function(order = this.isoGrid.cubes._order){
+			var windowPos = {x:Crafty.viewport._x,y:Crafty.viewport._y};
 			var that = this;
 			this.isoGrid.centerAt(0,0);
 			Crafty.viewport.reset();
@@ -128,6 +129,25 @@ define([
 				that.place(cube._ent,cube._pos[order[1]]*order[4],cube._pos[order[2]]*order[5],cube._pos[order[0]]*order[3])
 				cube._ent.draw();
 			})
+			Crafty.viewport.x = windowPos.x;
+			Crafty.viewport.y = windowPos.y;
+		},
+		rotate: function(axis,direction){ //rotates in 90 deg chunks around axis.
+			//this assumes that the x direction is towards the bottom-right, y is towards bottom-left, and z is towards top. ALWAYS.
+			//z = 0, y = 1, x = 2
+			var swaps = []
+			var oldOrder = this.isoGrid.cubes._order;
+			if(axis == 'x') swaps = [0,1];
+			if(axis == 'y') swaps = [0,2];
+			if(axis == 'z') swaps = [1,2];
+			if(direction == -1) swaps = [swaps[1],swaps[0]];
+			var temp = oldOrder[swaps[0]+3];
+			oldOrder[swaps[0]+3] = oldOrder[swaps[1]+3];
+			oldOrder[swaps[1]+3] = temp * -1;
+			temp = oldOrder[swaps[0]];
+			oldOrder[swaps[0]]=oldOrder[swaps[1]]
+			oldOrder[swaps[1]]=temp;
+			this.drawAll(oldOrder);
 		}
 	}
 	return cubeView;

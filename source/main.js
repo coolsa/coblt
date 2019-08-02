@@ -17,7 +17,7 @@ define([
 				}
 			}
 		};
-		this.iso.drawAll();
+		this.iso.drawAll(['z','y','x',1,1,1]);
 	};
 	main.prototype = {
 		test: function(){console.log("asdfasdf");}
