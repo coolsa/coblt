@@ -145,6 +145,7 @@ define([
 			if(axis == 'y') swaps = [0,2];
 			if(axis == 'z') swaps = [1,2];
 			if(direction == -1) swaps = [swaps[1],swaps[0]];
+			this.isoGrid.cubes.forEach
 			var temp = oldOrder[swaps[0]+3];
 			oldOrder[swaps[0]+3] = oldOrder[swaps[1]+3];
 			oldOrder[swaps[1]+3] = temp * -1;
