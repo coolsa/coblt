@@ -106,12 +106,13 @@ define([],function(){
 		}
 		return list;
 	}
-	function cubeNode(ent=null,pos = {x: null, y: null, z: null},list=null,next=null){
+	function cubeNode(ent=null,pos = {x: null, y: null, z: null},list=null,direction = [0,0,0,false], command = null,next=null){
 		this._ent = ent;
 		this._pos = pos;
 		this._list = list;
+		this._direction = direction;//basically the direction its pointing in. if it has stuff, it poitns. if not, it doesnt point.
 		if(this._ent) this._ent._cube = this;
-		this._command = null; //this is going to cointain the line that defines this block.
+		this._command = command; //this is going to cointain the line that defines this block.
 		//i guess since if its drawing, it goes in order of lowest z to lowest y to lowest x,
 		//it can act sort of like a line???
 		//1d is easy to deal with, as in this case i only really need a start.

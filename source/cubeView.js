@@ -127,6 +127,37 @@ define([
 				//	return;
 				//}
 				that.place(cube._ent,cube._pos[order[1]]*order[4],cube._pos[order[2]]*order[5],cube._pos[order[0]]*order[3])
+				if(cube._direction[0]==1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('pos_x_cond');
+					else cube._ent._children[3].sprite('pos_x_norm');
+				}
+				else if(cube._direction[0]==-1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('neg_x_cond');
+					else cube._ent._children[3].sprite('neg_x_norm');
+				}
+				else if(cube._direction[1]==1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('pos_y_cond');
+					else cube._ent._children[3].sprite('pos_y_norm');
+				}
+				else if(cube._direction[1]==-1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('neg_y_cond');
+					else cube._ent._children[3].sprite('neg_y_norm');
+				}
+				else if(cube._direction[2]==1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('pos_z_cond');
+					else cube._ent._children[3].sprite('pos_z_norm');
+				}
+				else if(cube._direction[2]==-1){
+					if(cube._direction[3]==true)
+						cube._ent._children[3].sprite('neg_z_cond');
+					else cube._ent._children[3].sprite('neg_z_norm');
+				}
+				else cube._ent._children[3].sprite('empty');
 				cube._ent.draw();
 			})
 			Crafty.viewport.x = windowPos.x;
@@ -142,7 +173,7 @@ define([
 			var swaps = []
 			var oldOrder = this.isoGrid.cubes._order;
 			if(axis == 'x') swaps = [0,1];
-			if(axis == 'y') swaps = [0,2];
+			if(axis == 'y') {swaps = [0,2]; direction *= -1;}; //basically right hand rule, point thumb in direction of axis, curl fingers, thats the rotation direction
 			if(axis == 'z') swaps = [1,2];
 			if(direction == -1) swaps = [swaps[1],swaps[0]];
 			var temp = oldOrder[swaps[0]+3];
@@ -151,6 +182,11 @@ define([
 			temp = oldOrder[swaps[0]];
 			oldOrder[swaps[0]]=oldOrder[swaps[1]]
 			oldOrder[swaps[1]]=temp;
+			this.isoGrid.cubes.forEach(function(cube){
+				temp = cube._direction[swaps[0]];
+				cube._direction[swaps[0]] = cube._direction[swaps[1]]*-1;
+				cube._direction[swaps[1]] = temp;
+			});
 			this.drawAll(oldOrder);
 		}
 	}
